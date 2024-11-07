@@ -69,3 +69,6 @@ In preparation for next week, complete the following in lab:
 - Firebase Realtime Database
 - Bootstrap 5
 - Webpack 5
+
+## Deployed on Netlify App
+[Almost Amazon Ozzy's](https://classy-tapioca-f7cb21.netlify.app/)
