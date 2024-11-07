@@ -33,6 +33,7 @@
     "bootstrap": "^5.1.0",
     "dotenv": "^10.0.0",
     "firebase": "^8.2.0",
-    "sass": "^1.51.0"
+    "sass": "^1.51.0",
+    "webpack-5.0-template": "file:"
   }
 }
