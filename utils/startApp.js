@@ -9,8 +9,8 @@ import navigationEvents from '../events/navigationEvents';
 
 const startApp = () => {
   domBuilder(); // BUILD THE DOM
-  domEvents(); // ADD THE EVENT LISTENTERS TO THE DOM
-  formEvents(); // ADD FORM EVENT LISTENTERS TO THE DOM
+  domEvents(); // ADD THE EVENT LISTENERS TO THE DOM
+  formEvents(); // ADD FORM EVENT LISTENERS TO THE DOM
   navBar(); // DYNAMICALLY ADD THE NAV
   logoutButton(); // ADD THE LOGOUT BUTTON COMPONENT
   navigationEvents(); // ATTACH THE EVENT LISTENERS TO THE NAVBAR
