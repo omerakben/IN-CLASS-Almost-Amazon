@@ -31,7 +31,18 @@ const createAuthor = (payload) => new Promise((resolve, reject) => {
     body: JSON.stringify(payload),
   })
     .then((response) => response.json())
-    .then((data) => resolve(data))
+    .then((data) => {
+      const firebaseKey = data.name;
+      fetch(`${endpoint}/books/${firebaseKey}.json`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ firebaseKey }),
+      })
+        .then(() => resolve({ ...payload, firebaseKey }))
+        .catch(reject);
+    })
     .catch(reject);
 });
 
