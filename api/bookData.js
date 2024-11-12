@@ -57,7 +57,18 @@ const createBook = (payload) => new Promise((resolve, reject) => {
     body: JSON.stringify(payload),
   })
     .then((response) => response.json())
-    .then((data) => resolve(data))
+    .then((data) => {
+      const firebaseKey = data.name;
+      fetch(`${endpoint}/books/${firebaseKey}.json`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ firebaseKey }),
+      })
+        .then(() => resolve({ ...payload, firebaseKey }))
+        .catch(reject);
+    })
     .catch(reject);
 });
 
@@ -77,7 +88,8 @@ const updateBook = (payload) => new Promise((resolve, reject) => {
 
 // FILTER BOOKS ON SALE
 const booksOnSale = () => new Promise((resolve, reject) => {
-  fetch(`${endpoint}/books.json?orderBy="sale"&equalTo=true`, {
+  const orderBy = encodeURIComponent('"sale"');
+  fetch(`${endpoint}/books.json?orderBy=${orderBy}&equalTo=true`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
