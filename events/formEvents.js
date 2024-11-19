@@ -1,5 +1,7 @@
 import { createBook, getBooks, updateBook } from '../api/bookData';
 import { showBooks } from '../pages/books';
+import { createAuthor, getAuthors, updateAuthor } from '../api/authorData';
+import { showAuthors } from '../pages/authors';
 
 const formEvents = () => {
   document.querySelector('#main-container').addEventListener('submit', (e) => {
@@ -44,8 +46,9 @@ const formEvents = () => {
         email: document.querySelector('#email').value,
         favorite: document.querySelector('#favorite').checked,
       };
-      // createAuthor(authorObj).then(showAuthors);
-      console.warn('CLICKED SUBMIT AUTHOR', authorObj);
+      createAuthor(authorObj).then(() => {
+        getAuthors().then(showAuthors);
+      });
     }
 
     // CLICK EVENT FOR EDITING AN AUTHOR
@@ -58,8 +61,9 @@ const formEvents = () => {
         favorite: document.querySelector('#favorite').checked,
         firebaseKey,
       };
-      // updateAuthor(authorObj).then(showAuthors);
-      console.warn('CLICKED UPDATE AUTHOR', authorObj);
+      updateAuthor(authorObj).then(() => {
+        getAuthors().then(showAuthors);
+      });
     }
   });
 };
