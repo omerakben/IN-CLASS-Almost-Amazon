@@ -5,6 +5,7 @@ import { showBooks } from '../pages/books';
 import { showAuthors } from '../pages/authors';
 import addBookForm from '../components/forms/addBookForm';
 import addAuthorForm from '../components/forms/addAuthorForm';
+import resetData from '../utils/resetData';
 
 const navigationEvents = () => {
   // LOGOUT BUTTON
@@ -57,6 +58,26 @@ const navigationEvents = () => {
   // ADD AUTHOR On NavBar
   document.querySelector('#add-author-btn').addEventListener('click', () => {
     addAuthorForm();
+  });
+
+  // FAVORITE AUTHORS
+  document.querySelector('#favorite-authors').addEventListener('click', () => {
+    getAuthors().then((authors) => {
+      const favoriteAuthors = authors.filter((author) => author.favorite);
+      showAuthors(favoriteAuthors);
+    });
+  });
+
+  // RESET DATA
+  document.querySelector('#reset-data').addEventListener('click', () => {
+    // eslint-disable-next-line no-alert
+    if (window.confirm('Are you sure you want to reset the data? This cannot be undone!')) {
+      resetData().then(() => {
+        window.location.reload(); // Reload the page after reset
+      }).catch((error) => {
+        console.error('Error resetting data:', error);
+      });
+    }
   });
 };
 
