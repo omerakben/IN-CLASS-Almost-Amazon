@@ -2,7 +2,7 @@ import client from '../utils/client';
 
 const endpoint = client.databaseURL;
 
-// GET ALL AUTHORS
+// GET AUTHORS
 const getAuthors = () => new Promise((resolve, reject) => {
   fetch(`${endpoint}/authors.json`, {
     method: 'GET',
@@ -31,18 +31,7 @@ const createAuthor = (payload) => new Promise((resolve, reject) => {
     body: JSON.stringify(payload),
   })
     .then((response) => response.json())
-    .then((data) => {
-      const firebaseKey = data.name;
-      fetch(`${endpoint}/books/${firebaseKey}.json`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ firebaseKey }),
-      })
-        .then(() => resolve({ ...payload, firebaseKey }))
-        .catch(reject);
-    })
+    .then((data) => resolve(data))
     .catch(reject);
 });
 
@@ -86,7 +75,26 @@ const updateAuthor = (payload) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
-// GET A SINGLE AUTHOR'S BOOKS
+// GET FAVORITE AUTHORS
+const favoriteAuthor = () => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/authors.json?orderBy="favorite"&equalTo=true`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data) {
+        resolve(Object.values(data));
+      } else {
+        resolve([]);
+      }
+    })
+    .catch(reject);
+});
+
+// GET AUTHOR BOOKS
 const getAuthorBooks = (firebaseKey) => new Promise((resolve, reject) => {
   fetch(`${endpoint}/books.json?orderBy="author_id"&equalTo="${firebaseKey}"`, {
     method: 'GET',
@@ -95,7 +103,13 @@ const getAuthorBooks = (firebaseKey) => new Promise((resolve, reject) => {
     },
   })
     .then((response) => response.json())
-    .then((data) => resolve(Object.values(data)))
+    .then((data) => {
+      if (data) {
+        resolve(Object.values(data));
+      } else {
+        resolve([]);
+      }
+    })
     .catch(reject);
 });
 
@@ -105,5 +119,6 @@ export {
   getSingleAuthor,
   deleteSingleAuthor,
   updateAuthor,
-  getAuthorBooks
+  favoriteAuthor,
+  getAuthorBooks,
 };

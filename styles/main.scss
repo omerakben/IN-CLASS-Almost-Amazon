@@ -1,44 +1,56 @@
+// Variables
+$primary-bg: black;
+$brand-color: red;
+$text-light: white;
+$sale-badge-color: blue;
+$card-width: 300px;
+
+// Import statements
 @import "~bootstrap/scss/bootstrap";
 @import "~@fortawesome/fontawesome-free/css/all.min.css";
 
+// Base styles
 body {
-  background-color: black;
+  background-color: $primary-bg;
 }
 
+// Navigation styles
 .navbar-dark .navbar-brand {
   font-family: "Oregano", cursive !important;
-  color: red;
+  color: $brand-color;
   font-weight: 900;
   font-size: 2em;
 }
 
+.logout {
+  margin: 0 1.25rem;
+  font-size: 1.5625rem;
+  color: $text-light;
+}
+
+// Cart styles
 .cart-items {
-  height: 300px;
+  height: 18.75rem;
   overflow: scroll;
 }
 
+#cart-thumb img {
+  height: 6.25rem;
+}
+
+// Utility classes
 .grey-box {
   float: left;
-  margin: 2px;
-  width: 200px;
-  height: 200px;
+  margin: 0.125rem;
+  width: 12.5rem;
+  height: 12.5rem;
 }
 
-#cart-thumb img {
-  height: 100px;
-}
-
-.logout {
-  margin: 0 20px;
-  font-size: 25px;
-  color: white;
-}
-
+// Main container styles
 #main-container {
   display: flex;
   flex-direction: column;
-  margin: 0 auto;
-  margin-top: 100px;
+  margin: 6.25rem auto 0;
   align-content: center;
 
   #add-button {
@@ -50,10 +62,10 @@ body {
     width: 60%;
     margin: auto;
     justify-content: center;
-    color: white;
+    color: $text-light;
 
     #formModal {
-      color: black;
+      color: $primary-bg;
     }
   }
 
@@ -65,27 +77,39 @@ body {
     margin: auto;
     justify-content: center;
 
-    .card {
-      width: 300px;
-      margin: 5px;
-
-      .sale-badge {
-        font-size: 1em;
-        background-color: blue;
-      }
-    }
-
     .table {
-      margin: 10px;
       width: 80%;
-      margin: 0 auto;
+      margin: 0.625rem auto;
     }
   }
 }
 
+// Card styles - consolidated
+.card {
+  width: $card-width;
+  margin: 0.3125rem;
+
+  .sale-badge {
+    font-size: 1em;
+    background-color: $sale-badge-color;
+  }
+}
+
+// View section styles
 #view {
   width: 90%;
   margin: auto;
+  text-align: center;
+
+  #viewInfoAuthorInfo {
+    color: $text-light;
+    text-align: start;
+  }
+
+  #viewAuthorDividing {
+    text-align: start;
+    color: $text-light;
+  }
 
   .details {
     min-width: 50%;
@@ -95,4 +119,9 @@ body {
   .description {
     white-space: pre-wrap;
   }
+}
+
+// Books on view authors
+#booksOnViewAuthors {
+  margin: 0 0.3rem;
 }

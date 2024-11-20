@@ -1,82 +1,69 @@
 import { signOut } from '../utils/auth';
-import { getBooks, booksOnSale, searchBooks } from '../api/bookData';
-import { getAuthors } from '../api/authorData';
+import { getBooks, booksOnSale } from '../api/bookData';
 import { showBooks } from '../pages/books';
+import { favoriteAuthor, getAuthors } from '../api/authorData';
 import { showAuthors } from '../pages/authors';
-import addBookForm from '../components/forms/addBookForm';
-import addAuthorForm from '../components/forms/addAuthorForm';
-import resetData from '../utils/resetData';
 
-const navigationEvents = () => {
-  // LOGOUT BUTTON
+const navigationEvents = (user) => {
   document.querySelector('#logout-button')
     .addEventListener('click', signOut);
 
-  // ALL BOOKS
-  document.querySelector('#all-books').addEventListener('click', () => {
-    getBooks().then(showBooks);
-  });
-
-  // BOOKS ON SALE
   document.querySelector('#sale-books').addEventListener('click', () => {
-    booksOnSale().then(showBooks);
-  });
-
-  // AUTHORS
-  // TODO: If the array is empty because there are no authors, make sure to use the emptyAuthor function
-  document.querySelector('#authors').addEventListener('click', () => {
-    getAuthors().then((authors) => {
-      if (authors.length) {
-        showAuthors(authors);
-      } else {
-        console.warn('No authors found');
-      }
-    });
-  });
-
-  // SEARCH
-  // TODO: IF THE SEARCH DOESN'T RETURN ANYTHING, SHOW THE EMPTY STORE
-  document.querySelector('#search').addEventListener('keyup', (e) => {
-    if (e.keyCode === 13) {
-      const searchValue = document.querySelector('#search').value.toLowerCase();
-      searchBooks(searchValue).then((books) => {
-        if (books.length) {
-          showBooks(books);
-        } else {
-          console.warn('No books found');
-        }
-      });
-      document.querySelector('#search').value = '';
+    if (user) {
+      booksOnSale(user.uid).then(showBooks);
+    } else {
+      console.warn('User must be logged in to view sale books');
     }
   });
 
-  // ADD BOOK On NavBar
-  document.querySelector('#add-book-btn').addEventListener('click', () => {
-    addBookForm();
+  document.querySelector('#all-books').addEventListener('click', () => {
+    if (user) {
+      getBooks(user.uid).then(showBooks);
+    } else {
+      console.warn('User must be logged in to view books');
+    }
   });
 
-  // ADD AUTHOR On NavBar
-  document.querySelector('#add-author-btn').addEventListener('click', () => {
-    addAuthorForm();
+  document.querySelector('#authors').addEventListener('click', () => {
+    if (user) {
+      getAuthors(user.uid).then(showAuthors);
+    } else {
+      console.warn('User must be logged in to view authors');
+    }
   });
 
-  // FAVORITE AUTHORS
-  document.querySelector('#favorite-authors').addEventListener('click', () => {
-    getAuthors().then((authors) => {
-      const favoriteAuthors = authors.filter((author) => author.favorite);
-      showAuthors(favoriteAuthors);
-    });
+  document.querySelector('#fav-authors').addEventListener('click', () => {
+    if (user) {
+      favoriteAuthor(user.uid).then(showAuthors);
+    } else {
+      console.warn('User must be logged in to view favorite authors');
+    }
   });
 
-  // RESET DATA
-  document.querySelector('#reset-data').addEventListener('click', () => {
-    // eslint-disable-next-line no-alert
-    if (window.confirm('Are you sure you want to reset the data? This cannot be undone!')) {
-      resetData().then(() => {
-        window.location.reload(); // Reload the page after reset
-      }).catch((error) => {
-        console.error('Error resetting data:', error);
-      });
+  document.querySelector('#search').addEventListener('keyup', (e) => {
+    if (user) {
+      const searchValue = document.querySelector('#search').value.toLowerCase();
+
+      if (e.keyCode === 13) {
+        getBooks(user.uid).then((books) => {
+          const filteredBooks = books.filter((book) => book.title.toLowerCase().includes(searchValue)
+            || book.description.toLowerCase().includes(searchValue));
+          showBooks(filteredBooks);
+          document.querySelector('#search').value = '';
+        });
+      }
+    } else {
+      console.warn('User must be logged in to search');
+    }
+  });
+
+  document.querySelector('#navigation').addEventListener('click', (e) => {
+    if (e.target.id.includes('authors-link')) {
+      if (user) {
+        getAuthors(user.uid).then(showAuthors);
+      } else {
+        console.warn('User must be logged in to view authors');
+      }
     }
   });
 };
