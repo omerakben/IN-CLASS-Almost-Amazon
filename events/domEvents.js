@@ -1,62 +1,74 @@
-import { deleteBook, getBooks, getSingleBook } from '../api/bookData';
 import { getAuthors, getSingleAuthor } from '../api/authorData';
-import { showBooks } from '../pages/books';
+import viewBook from '../pages/viewBook';
+import { getBooks, deleteBook, getSingleBook } from '../api/bookData';
 import { showAuthors } from '../pages/authors';
+import { showBooks } from '../pages/books';
 import addBookForm from '../components/forms/addBookForm';
 import addAuthorForm from '../components/forms/addAuthorForm';
-import viewBook from '../pages/viewBook';
-import deleteAuthorBooksRelationship from '../api/mergedData';
+import { getBookDetails, getAuthorDetails, deleteAuthorBooksRelationship } from '../api/mergedData';
+import viewAuthor from '../pages/viewAuthors';
 
-const domEvents = () => {
+// eslint-disable-next-line no-alert
+const handleDelete = (message) => window.confirm(message);
+
+const domEvents = (user) => {
   document.querySelector('#main-container').addEventListener('click', (e) => {
-    // CLICK EVENT FOR DELETING A BOOK
-    if (e.target.id.includes('delete-book')) {
-      // eslint-disable-next-line no-alert
-      if (window.confirm('Want to delete?')) {
-        const [, firebaseKey] = e.target.id.split('--');
-        deleteBook(firebaseKey).then(() => {
-          getBooks().then(showBooks);
-        });
-      }
-    }
-
-    // CLICK EVENT FOR SHOWING FORM FOR ADDING A BOOK
+    // Book Events
     if (e.target.id.includes('add-book-btn')) {
-      addBookForm();
+      addBookForm({ uid: user.uid });
     }
 
-    // CLICK EVENT EDITING/UPDATING A BOOK
     if (e.target.id.includes('edit-book-btn')) {
       const [, firebaseKey] = e.target.id.split('--');
-      getSingleBook(firebaseKey).then((bookObj) => addBookForm(bookObj));
+      getSingleBook(firebaseKey)
+        .then((bookObj) => addBookForm(bookObj))
+        .catch((error) => console.error('Error getting book:', error));
     }
 
-    // CLICK EVENT FOR VIEW BOOK DETAILS
-    if (e.target.id.includes('view-book-btn')) {
+    if (e.target.id.includes('delete-book')) {
       const [, firebaseKey] = e.target.id.split('--');
-      getSingleBook(firebaseKey).then(viewBook);
-    }
-
-    // CLICK EVENT FOR DELETING AN AUTHOR
-    if (e.target.id.includes('delete-author-btn')) {
-      // eslint-disable-next-line no-alert
-      if (window.confirm('Want to delete?')) {
-        const [, firebaseKey] = e.target.id.split('--');
-        deleteAuthorBooksRelationship(firebaseKey).then(() => {
-          getAuthors().then(showAuthors);
-        });
+      if (handleDelete('Are you sure you want to delete this book?')) {
+        deleteBook(firebaseKey)
+          .then(() => getBooks(user.uid))
+          .then(showBooks)
+          .catch((error) => console.error('Error deleting book:', error));
       }
     }
 
-    // CLICK EVENT FOR SHOWING FORM FOR ADDING AN AUTHOR
-    if (e.target.id.includes('add-author-btn')) {
-      addAuthorForm();
+    if (e.target.id.includes('view-book-btn')) {
+      const [, firebaseKey] = e.target.id.split('--');
+      getBookDetails(firebaseKey)
+        .then(viewBook)
+        .catch((error) => console.error('Error viewing book:', error));
     }
 
-    // CLICK EVENT FOR EDITING AN AUTHOR
-    if (e.target.id.includes('update-author')) {
+    // Author Events
+    if (e.target.id.includes('add-author-btn')) {
+      addAuthorForm({ uid: user.uid });
+    }
+
+    if (e.target.id.includes('update-author-btn')) {
       const [, firebaseKey] = e.target.id.split('--');
-      getSingleAuthor(firebaseKey).then((authorObj) => addAuthorForm(authorObj));
+      getSingleAuthor(firebaseKey)
+        .then((authorObj) => addAuthorForm(authorObj))
+        .catch((error) => console.error('Error getting author:', error));
+    }
+
+    if (e.target.id.includes('delete-author-btn')) {
+      const [, firebaseKey] = e.target.id.split('--');
+      if (handleDelete('Are you sure you want to delete this author?')) {
+        deleteAuthorBooksRelationship(firebaseKey)
+          .then(() => getAuthors(user.uid))
+          .then(showAuthors)
+          .catch((error) => console.error('Error deleting author:', error));
+      }
+    }
+
+    if (e.target.id.includes('view-author-btn')) {
+      const [, firebaseKey] = e.target.id.split('--');
+      getAuthorDetails(firebaseKey)
+        .then(viewAuthor)
+        .catch((error) => console.error('Error viewing author:', error));
     }
   });
 };
